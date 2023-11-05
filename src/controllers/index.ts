@@ -188,7 +188,11 @@ exports.deleteProduct = async (req: Request, res: Response) => {
       throw new Error("Sneaker doesn't exists or already been deleted");
     res
       .status(200)
-      .json({ message: "this was the sneaker deleted", deleted_sneaker });
+      .json({
+        message: "this was the sneaker deleted",
+        deleted_sneaker,
+        status: 200,
+      });
   } catch (error: any) {
     return res
       .status(500)
