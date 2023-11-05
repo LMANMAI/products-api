@@ -24,7 +24,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 DataBaseConnection();
 app.use("/", helloRoute);
-app.use("/snakers", sneakersRoute);
+app.use("/product", sneakersRoute);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);

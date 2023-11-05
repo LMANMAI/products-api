@@ -1,8 +1,4 @@
 import { Document } from "mongoose";
-export class QueryOptions {
-  offset?: number;
-  limit?: number;
-}
 
 export class GetSneakersDto {
   brand?: string;

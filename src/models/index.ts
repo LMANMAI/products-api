@@ -1,11 +1,29 @@
 import * as mongoose from "mongoose";
+import { Model } from "mongoose";
+type SneakerType = SneakerModel & mongoose.Document;
 
+interface Size {
+  size: string;
+  qty: string;
+}
+export interface SneakerModel {
+  name: string;
+  relaseYear: string;
+  posterPathImage: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  createdAt: Date;
+  imgs: string[];
+  genre: string;
+  sizes: Size[];
+}
 const sizeSchema = new mongoose.Schema({
   size: String,
   qty: String,
 });
 
-export const SneakerSchema = new mongoose.Schema({
+const SneakerSchema = new mongoose.Schema({
   name: { trim: true, type: String },
   relaseYear: String,
   posterPathImage: String,
@@ -17,5 +35,9 @@ export const SneakerSchema = new mongoose.Schema({
   genre: { type: String, trim: true },
   sizes: [sizeSchema],
 });
-export const SneakerModel = mongoose.model("SneakerModel", SneakerSchema);
-module.exports = mongoose.model("SneakerSchema", SneakerSchema);
+const Sneaker: Model<SneakerType> = mongoose.model<SneakerType>(
+  "Sneaker",
+  SneakerSchema
+);
+
+export default Sneaker;
