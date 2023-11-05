@@ -1,6 +1,6 @@
 const sneakerService = require("../services");
 import { Request, Response } from "express";
-import { uploadFile, deleteImage } from "../cloudinary";
+import { uploadFile } from "../cloudinary";
 
 //crear producto
 exports.createProduct = async (req: Request, res: Response) => {
@@ -40,6 +40,7 @@ exports.getAllProducts = async (req: Request, res: Response) => {
       data: paginatedSneakers,
       totalSneakers,
       totalPages,
+      status: 200,
       currenPage: page,
     });
   } catch (error: any) {
@@ -49,7 +50,7 @@ exports.getAllProducts = async (req: Request, res: Response) => {
     });
   }
 };
-
+//obtener las productos con filtros
 exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
   const { name, genre, brand } = req.query;
   const page = Number(req.query.page) || 1;
@@ -101,10 +102,11 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     });
   }
 };
+//obtener producto con id
 exports.getOne = async (req: Request, res: Response) => {
   try {
     const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
-    if (!sneaker) throw "Sneaker doesn't exist";
+    if (!sneaker) throw new Error("Sneaker doesn't exist");
     return res.status(200).json({ sneaker });
   } catch (error: any) {
     return res.status(500).json({
@@ -114,24 +116,60 @@ exports.getOne = async (req: Request, res: Response) => {
     });
   }
 };
-
+//agregar imagenes al producto
 exports.insertImagesOnProduct = async (req: Request, res: Response) => {
-  res.send("Ruta de verificacion de funcionamiento, metodo post funcionando");
-};
+  try {
+    const { sneakerID } = req.params;
+    const images = req.files as Express.Multer.File[];
+    const uploadPromises = images.map(async (img: Express.Multer.File) => {
+      const imageCloud = await uploadFile(img);
+      return imageCloud.public_id;
+    });
 
+    const uploadedImageIds = await Promise.all(uploadPromises);
+    const sneaker = await sneakerService.putImagesOnSneaker(
+      sneakerID,
+      uploadedImageIds
+    );
+    res.status(200).json({
+      message: "Sneaker updated correct",
+      sneaker,
+      status: 200,
+    });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Error updateding sneaker", error: error.message });
+  }
+};
 //editar proucto
 exports.updateProduct = async (req: Request, res: Response) => {
-  res.send("Ruta de verificacion de funcionamiento, metodo put funcionando");
-};
-//eliminar imagen
-exports.deleteProductImage = async (req: Request, res: Response) => {
-  const { sneakerID, imageID } = req.params;
   try {
-    console.log(sneakerID, "sneakerID");
-    console.log(imageID, "imageID");
-    // const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
-    // if (!sneaker) throw "Sneaker doesn't exist";
-    // return res.status(200).json({ sneaker });
+    const { sneakerID } = req.params;
+    const new_sneaker = await sneakerService.updateSneaker(sneakerID, req.body);
+    if (!new_sneaker) throw new Error("Cannot update the sneaker");
+    res.status(200).json({
+      message: "Sneaker updated correct",
+      new_sneaker,
+      status: 200,
+    });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Error updateding sneaker", error: error.message });
+  }
+};
+//eliminar imagen de un producto
+exports.deleteProductImage = async (req: Request, res: Response) => {
+  const { sneakerID, imageID, type } = req.params;
+  try {
+    const sneaker = await sneakerService.deleteImageSneaker(
+      sneakerID,
+      imageID,
+      type
+    );
+    if (!sneaker) throw new Error("Sneaker doesn't exist");
+    return res.status(200).json({ sneaker });
   } catch (error: any) {
     return res.status(500).json({
       message: "Error bringing sneaker",
@@ -147,7 +185,7 @@ exports.deleteProduct = async (req: Request, res: Response) => {
       req.params.sneakerID
     );
     if (!deleted_sneaker)
-      throw "Sneaker doesn't exists or already been deleted";
+      throw new Error("Sneaker doesn't exists or already been deleted");
     res
       .status(200)
       .json({ message: "this was the sneaker deleted", deleted_sneaker });

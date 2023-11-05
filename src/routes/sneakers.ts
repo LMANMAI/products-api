@@ -5,17 +5,19 @@ const multer = require("multer");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
 router.get("/", SneakerController.getAllProducts);
 router.get("/search", SneakerController.getAllProductsWithFilters);
 router.get("/:sneakerID", SneakerController.getOne);
 router.post("/create", upload.single("image"), SneakerController.createProduct);
-router.post(
+router.put(
   "/productimages/:sneakerID",
+  upload.array("images", 3),
   SneakerController.insertImagesOnProduct
 );
 router.put("/update/:sneakerID", SneakerController.updateProduct);
 router.put(
-  "/deleteproductimage/:sneakerID/:imageID",
+  "/deleteproductimage/:sneakerID/:imageID/:type",
   SneakerController.deleteProductImage
 );
 router.delete("/delete/:sneakerID", SneakerController.deleteProduct);

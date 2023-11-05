@@ -26,46 +26,31 @@ async function findAllSneakersWithFilter(filterDto: any) {
   return sneakers;
 }
 // Función para encontrar un sneaker por su ID
-async function findSneakerById(sneakerID: any) {
+async function findSneakerById(sneakerID: string) {
   const sneaker = await Sneaker.findById(sneakerID);
   return sneaker;
 }
-
 // Función para crear un nuevo sneaker
-async function createSneaker(sneakerData: any, image: any) {
+async function createSneaker(sneakerData: any, image: Express.Multer.File) {
   const newSneaker = new Sneaker({
     ...JSON.parse(sneakerData),
     posterPathImage: image,
   });
 
   const savedSneaker = await newSneaker.save();
-  console.log(savedSneaker);
   return savedSneaker;
 }
-
 // Función para actualizar un sneaker por su ID
-async function updateSneaker(sneakerID: any, sneakerData: any, image: any) {
-  const prevItem = await Sneaker.findById(sneakerID);
-  let updatedSneaker = {
-    ...JSON.parse(sneakerData.sneaker),
-    posterPathImage: image,
-  };
-
+async function updateSneaker(sneakerID: string, sneakerData: any) {
   const updatedSneakerDocument = await Sneaker.findByIdAndUpdate(
     sneakerID,
-    updatedSneaker,
+    sneakerData,
     { new: true }
   );
-
-  if (updatedSneakerDocument) {
-    // Añade lógica para eliminar la imagen anterior con Cloudinary
-  }
-
   return updatedSneakerDocument;
 }
-
 // Función para eliminar un sneaker por su ID
-async function deleteSneaker(sneakerID: any) {
+async function deleteSneaker(sneakerID: string) {
   const prevItem = await Sneaker.findById(sneakerID);
   const deletedSneaker = await Sneaker.findByIdAndDelete(sneakerID);
 
@@ -75,18 +60,49 @@ async function deleteSneaker(sneakerID: any) {
 
   return deletedSneaker;
 }
+async function deleteImageSneaker(
+  sneakerID: string,
+  imageID: string,
+  type: string
+) {
+  if (type === "poster") {
+    const updatedSneaker = await Sneaker.findByIdAndUpdate(
+      sneakerID,
+      { $set: { posterPathImage: "" } },
+      { new: true }
+    );
 
+    if (updatedSneaker) {
+      await deleteImage(`sneaker/${imageID}`);
+    }
+    return updatedSneaker;
+  } else if (type === "image") {
+    const updatedSneaker = await Sneaker.findByIdAndUpdate(
+      sneakerID,
+      { $pull: { imgs: `sneaker/${imageID}` } },
+      { new: true }
+    );
+
+    if (updatedSneaker) {
+      await deleteImage(`sneaker/${imageID}`);
+    }
+
+    return updatedSneaker;
+  }
+}
 // Función para agregar imágenes a un sneaker por su ID
-// async function putImagesOnSneaker(sneakerID: any, images: any) {
-//   const sneaker = await Sneaker.findById(sneakerID);
-//   sneaker.imgs = images;
-
-//   const updatedSneaker = await Sneaker.findByIdAndUpdate(sneakerID, sneaker, {
-//     new: true,
-//   });
-
-//   return updatedSneaker;
-// }
+async function putImagesOnSneaker(sneakerID: any, images: any) {
+  const sneaker = await Sneaker.findById(sneakerID);
+  if (sneaker) {
+    sneaker.imgs = images;
+    const updatedSneaker = await Sneaker.findByIdAndUpdate(sneakerID, sneaker, {
+      new: true,
+    });
+    return updatedSneaker;
+  } else {
+    throw new Error("Sneaker no encontrada");
+  }
+}
 
 module.exports = {
   findAllSneakers,
@@ -95,4 +111,6 @@ module.exports = {
   createSneaker,
   updateSneaker,
   deleteSneaker,
+  deleteImageSneaker,
+  putImagesOnSneaker,
 };

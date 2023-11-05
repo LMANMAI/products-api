@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-const multer = require("multer");
 const bodyParser = require("body-parser");
 import { helloRoute, sneakersRoute } from "./routes";
 require("dotenv").config({ path: ".env" });
