@@ -1,5 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
+const multer = require("multer");
+const bodyParser = require("body-parser");
 import { helloRoute, sneakersRoute } from "./routes";
 require("dotenv").config({ path: ".env" });
 
@@ -19,6 +21,7 @@ const DataBaseConnection = async () => {
 };
 
 const app = express();
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 const port = process.env.PORT || 3000;

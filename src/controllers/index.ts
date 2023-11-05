@@ -1,8 +1,28 @@
 const sneakerService = require("../services");
 import { Request, Response } from "express";
+import { uploadFile } from "../cloudinary";
+
 //crear producto
 exports.createProduct = async (req: Request, res: Response) => {
-  res.send("Ruta de verificacion de funcionamiento, metodo post funcionando");
+  try {
+    const { sneaker } = req.body;
+    const image = req.file;
+    const imageCloud = await uploadFile(image);
+    const newSneaker = await sneakerService.createSneaker(
+      sneaker,
+      imageCloud.public_id
+    );
+
+    return res.status(200).json({
+      message: "Sneaker created successfully",
+      sneaker: newSneaker,
+    });
+  } catch (error: any) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "Error creating sneaker", error: error.message });
+  }
 };
 //obtener las productos
 exports.getAllProducts = async (req: Request, res: Response) => {
@@ -107,6 +127,7 @@ exports.deleteProductImages = async (req: Request, res: Response) => {
 exports.updateProduct = async (req: Request, res: Response) => {
   res.send("Ruta de verificacion de funcionamiento, metodo put funcionando");
 };
+
 //eliminar producto
 exports.deleteProduct = async (req: Request, res: Response) => {
   try {
@@ -121,6 +142,6 @@ exports.deleteProduct = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error deleting sneaker", error: error.message });
+      .json({ message: "Error deleting sneaker", error: error });
   }
 };

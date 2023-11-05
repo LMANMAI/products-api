@@ -1,11 +1,10 @@
 import Sneaker from "../models";
-
+import { uploadFile, deleteImage } from "../cloudinary";
 // Función para encontrar todos los sneakers con opciones de paginación
 async function findAllSneakers() {
   const sneakers = await Sneaker.find();
   return sneakers;
 }
-
 // Función para encontrar todos los sneakers con filtros
 async function findAllSneakersWithFilter(filterDto: any) {
   let sneakers = await Sneaker.find();
@@ -26,7 +25,6 @@ async function findAllSneakersWithFilter(filterDto: any) {
   }
   return sneakers;
 }
-
 // Función para encontrar un sneaker por su ID
 async function findSneakerById(sneakerID: any) {
   const sneaker = await Sneaker.findById(sneakerID);
@@ -36,12 +34,12 @@ async function findSneakerById(sneakerID: any) {
 // Función para crear un nuevo sneaker
 async function createSneaker(sneakerData: any, image: any) {
   const newSneaker = new Sneaker({
-    ...JSON.parse(sneakerData.sneaker),
+    ...JSON.parse(sneakerData),
     posterPathImage: image,
   });
 
   const savedSneaker = await newSneaker.save();
-
+  console.log(savedSneaker);
   return savedSneaker;
 }
 
@@ -71,8 +69,9 @@ async function deleteSneaker(sneakerID: any) {
   const prevItem = await Sneaker.findById(sneakerID);
   const deletedSneaker = await Sneaker.findByIdAndDelete(sneakerID);
 
-  if (deletedSneaker) {
+  if (deletedSneaker && prevItem) {
     // Añade lógica para eliminar la imagen anterior con Cloudinary
+    await deleteImage(prevItem.posterPathImage);
   }
 
   return deletedSneaker;
