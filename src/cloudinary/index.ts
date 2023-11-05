@@ -35,10 +35,8 @@ export async function deleteImage(publicId: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     cloudinary.uploader.destroy(publicId, (error, result) => {
       if (error) {
-        console.log(error);
         reject(error);
       } else {
-        console.log(result);
         resolve(result);
       }
     });

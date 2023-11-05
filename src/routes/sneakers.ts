@@ -14,10 +14,10 @@ router.post(
   SneakerController.insertImagesOnProduct
 );
 router.put("/update/:sneakerID", SneakerController.updateProduct);
-router.delete("/delete/:sneakerID", SneakerController.deleteProduct);
-router.delete(
-  "/productimages/:sneakerID",
-  SneakerController.deleteProductImages
+router.put(
+  "/deleteproductimage/:sneakerID/:imageID",
+  SneakerController.deleteProductImage
 );
+router.delete("/delete/:sneakerID", SneakerController.deleteProduct);
 
 export default router;

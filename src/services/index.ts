@@ -1,5 +1,5 @@
 import Sneaker from "../models";
-import { uploadFile, deleteImage } from "../cloudinary";
+import { deleteImage } from "../cloudinary";
 // Función para encontrar todos los sneakers con opciones de paginación
 async function findAllSneakers() {
   const sneakers = await Sneaker.find();
@@ -70,7 +70,6 @@ async function deleteSneaker(sneakerID: any) {
   const deletedSneaker = await Sneaker.findByIdAndDelete(sneakerID);
 
   if (deletedSneaker && prevItem) {
-    // Añade lógica para eliminar la imagen anterior con Cloudinary
     await deleteImage(prevItem.posterPathImage);
   }
 

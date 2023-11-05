@@ -1,6 +1,6 @@
 const sneakerService = require("../services");
 import { Request, Response } from "express";
-import { uploadFile } from "../cloudinary";
+import { uploadFile, deleteImage } from "../cloudinary";
 
 //crear producto
 exports.createProduct = async (req: Request, res: Response) => {
@@ -18,7 +18,6 @@ exports.createProduct = async (req: Request, res: Response) => {
       sneaker: newSneaker,
     });
   } catch (error: any) {
-    console.log(error);
     return res
       .status(500)
       .json({ message: "Error creating sneaker", error: error.message });
@@ -102,7 +101,6 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     });
   }
 };
-
 exports.getOne = async (req: Request, res: Response) => {
   try {
     const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
@@ -120,14 +118,28 @@ exports.getOne = async (req: Request, res: Response) => {
 exports.insertImagesOnProduct = async (req: Request, res: Response) => {
   res.send("Ruta de verificacion de funcionamiento, metodo post funcionando");
 };
+
 //editar proucto
-exports.deleteProductImages = async (req: Request, res: Response) => {
-  res.send("Ruta de verificacion de funcionamiento, metodo delete funcionando");
-};
 exports.updateProduct = async (req: Request, res: Response) => {
   res.send("Ruta de verificacion de funcionamiento, metodo put funcionando");
 };
-
+//eliminar imagen
+exports.deleteProductImage = async (req: Request, res: Response) => {
+  const { sneakerID, imageID } = req.params;
+  try {
+    console.log(sneakerID, "sneakerID");
+    console.log(imageID, "imageID");
+    // const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
+    // if (!sneaker) throw "Sneaker doesn't exist";
+    // return res.status(200).json({ sneaker });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: "Error bringing sneaker",
+      error: error.message,
+      status: 500,
+    });
+  }
+};
 //eliminar producto
 exports.deleteProduct = async (req: Request, res: Response) => {
   try {
