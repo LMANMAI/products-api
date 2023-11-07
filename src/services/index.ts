@@ -98,7 +98,8 @@ async function putImagesOnSneaker(sneakerID: any, images: any) {
       const combinedImages = [...sneaker.imgs, ...images].slice(0, 3);
       sneaker.imgs = combinedImages;
 
-      await sneaker.save();
+      cosnt updateditem = await sneaker.save();
+     return updateditem;
     } else {
       throw new Error(
         "Las imagenes adicionales del producto estan limitadas a un maximo de 3."
