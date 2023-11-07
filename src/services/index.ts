@@ -94,11 +94,15 @@ async function deleteImageSneaker(
 async function putImagesOnSneaker(sneakerID: any, images: any) {
   const sneaker = await Sneaker.findById(sneakerID);
   if (sneaker) {
-    sneaker.imgs = images;
-    const updatedSneaker = await Sneaker.findByIdAndUpdate(sneakerID, sneaker, {
-      new: true,
-    });
-    return updatedSneaker;
+    if (Array.isArray(images) && images.length <= 3) {
+      await Sneaker.findByIdAndUpdate(sneakerID, { $set: { imgs: images } });
+      const updatedSneaker = await Sneaker.findById(sneakerID);
+      return updatedSneaker;
+    } else {
+      throw new Error(
+        "Las imagenes adicionales del producto estan limitadas a un maximo de 3."
+      );
+    }
   } else {
     throw new Error("Sneaker no encontrada");
   }
