@@ -95,9 +95,10 @@ async function putImagesOnSneaker(sneakerID: any, images: any) {
   const sneaker = await Sneaker.findById(sneakerID);
   if (sneaker) {
     if (Array.isArray(images) && images.length <= 3) {
-      await Sneaker.findByIdAndUpdate(sneakerID, { $set: { imgs: images } });
-      const updatedSneaker = await Sneaker.findById(sneakerID);
-      return updatedSneaker;
+      const combinedImages = [...sneaker.imgs, ...images].slice(0, 3);
+      sneaker.imgs = combinedImages;
+
+      await sneaker.save();
     } else {
       throw new Error(
         "Las imagenes adicionales del producto estan limitadas a un maximo de 3."
