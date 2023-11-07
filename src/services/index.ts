@@ -98,7 +98,7 @@ async function putImagesOnSneaker(sneakerID: any, images: any) {
       const combinedImages = [...sneaker.imgs, ...images].slice(0, 3);
       sneaker.imgs = combinedImages;
 
-      cosnt updateditem = await sneaker.save();
+      const updateditem = await sneaker.save();
      return updateditem;
     } else {
       throw new Error(
