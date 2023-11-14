@@ -202,7 +202,10 @@ exports.updatePosterImage = async (req: Request, res: Response) => {
     const image = req.file;
     const { sneakerID } = req.params;
     const imageCloud = await uploadFile(image);
-    const res = await sneakerService.updatePosterImage(sneakerID, imageCloud);
+    const res = await sneakerService.updatePosterImage(
+      sneakerID,
+      imageCloud.public_id
+    );
     return res.status(200).json({
       message: "Sneaker created successfully",
       sneaker: res,
