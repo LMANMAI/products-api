@@ -9,17 +9,17 @@ async function findAllSneakers() {
 async function findAllSneakersWithFilter(filterDto: any) {
   let sneakers = await Sneaker.find();
   if (filterDto && filterDto.name) {
-    sneakers = sneakers.filter((sneaker) =>
+    sneakers = sneakers.filter((sneaker: any) =>
       sneaker.name.toUpperCase().includes(filterDto.name)
     );
   }
   if (filterDto && filterDto.genre) {
-    sneakers = sneakers.filter((sneaker) =>
+    sneakers = sneakers.filter((sneaker: any) =>
       sneaker.genre.toUpperCase().includes(filterDto.genre)
     );
   }
   if (filterDto && filterDto.brand) {
-    sneakers = sneakers.filter((sneaker) =>
+    sneakers = sneakers.filter((sneaker: any) =>
       sneaker.brand.toUpperCase().includes(filterDto.brand)
     );
   }
@@ -45,6 +45,14 @@ async function updateSneaker(sneakerID: string, sneakerData: any) {
   const updatedSneakerDocument = await Sneaker.findByIdAndUpdate(
     sneakerID,
     sneakerData,
+    { new: true }
+  );
+  return updatedSneakerDocument;
+}
+async function updatePosterImage(sneakerID: string, img: string) {
+  const updatedSneakerDocument = await Sneaker.findByIdAndUpdate(
+    sneakerID,
+    { $set: { posterPathImage: img } },
     { new: true }
   );
   return updatedSneakerDocument;
@@ -99,7 +107,7 @@ async function putImagesOnSneaker(sneakerID: any, images: any) {
       sneaker.imgs = combinedImages;
 
       const updateditem = await sneaker.save();
-     return updateditem;
+      return updateditem;
     } else {
       throw new Error(
         "Las imagenes adicionales del producto estan limitadas a un maximo de 3."
@@ -119,4 +127,5 @@ module.exports = {
   deleteSneaker,
   deleteImageSneaker,
   putImagesOnSneaker,
+  updatePosterImage,
 };

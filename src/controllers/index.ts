@@ -186,16 +186,31 @@ exports.deleteProduct = async (req: Request, res: Response) => {
     );
     if (!deleted_sneaker)
       throw new Error("Sneaker doesn't exists or already been deleted");
-    res
-      .status(200)
-      .json({
-        message: "this was the sneaker deleted",
-        deleted_sneaker,
-        status: 200,
-      });
+    res.status(200).json({
+      message: "this was the sneaker deleted",
+      deleted_sneaker,
+      status: 200,
+    });
   } catch (error: any) {
     return res
       .status(500)
       .json({ message: "Error deleting sneaker", error: error });
+  }
+};
+exports.updatePosterImage = async (req: Request, res: Response) => {
+  try {
+    const image = req.file;
+    const { sneakerID } = req.params;
+    const imageCloud = await uploadFile(image);
+    const res = await sneakerService.updatePosterImage(sneakerID, imageCloud);
+    return res.status(200).json({
+      message: "Sneaker created successfully",
+      sneaker: res,
+      status: 200,
+    });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Error updating sneaker", error: error.message });
   }
 };

@@ -17,6 +17,11 @@ router.put(
 );
 router.put("/update/:sneakerID", SneakerController.updateProduct);
 router.put(
+  "/updateposterimage/:sneakerID",
+  upload.single("image"),
+  SneakerController.updatePosterImage
+);
+router.put(
   "/deleteproductimage/:sneakerID/:imageID/:type",
   SneakerController.deleteProductImage
 );
