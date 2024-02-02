@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 const bodyParser = require("body-parser");
-import { helloRoute, sneakersRoute } from "./routes";
+import { helloRoute, sneakersRoute, promotionsRoute } from "./routes";
 require("dotenv").config({ path: ".env" });
 
 const cors = require("cors");
@@ -27,6 +27,7 @@ const port = process.env.PORT || 3000;
 DataBaseConnection();
 app.use("/", helloRoute);
 app.use("/product", sneakersRoute);
+app.use("/promotion", promotionsRoute);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
