@@ -2,8 +2,17 @@ const promotionService = require("../services/promotionService");
 import { Request, Response } from "express";
 
 //crear promocion
-exports.createProduct = async (req: Request, res: Response) => {
+exports.createPromotion = async (req: Request, res: Response) => {
   try {
+    const { afectedProduct, discountAmount } = req.body;
+
+    // Crea una nueva instancia del modelo Promotion
+    const savedPromotion = await promotionService.createNewPromotion(
+      afectedProduct,
+      discountAmount
+    );
+
+    res.status(201).json(savedPromotion);
   } catch (error: any) {
     return res
       .status(500)
