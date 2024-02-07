@@ -1,6 +1,7 @@
 import Promotion from "../models/promotionModel";
 
 async function findAllPromotions() {}
+
 async function createNewPromotion(afectedProduct: any, discountAmount: number) {
   const newPromotion = new Promotion({
     afectedProduct,

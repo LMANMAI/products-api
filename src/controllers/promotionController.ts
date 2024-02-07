@@ -1,6 +1,11 @@
 const promotionService = require("../services/promotionService");
 import { Request, Response } from "express";
 
+exports.getURL = async (req: Request, res: Response) => {
+  res
+    .status(200)
+    .json({ message: "Ruta de prueba para las urls de las promociones" });
+};
 //crear promocion
 exports.createPromotion = async (req: Request, res: Response) => {
   try {
@@ -11,8 +16,14 @@ exports.createPromotion = async (req: Request, res: Response) => {
       afectedProduct,
       discountAmount
     );
-
-    res.status(201).json(savedPromotion);
+    if (discountAmount === 0) {
+      res.status(500).json({
+        message: "La promocion necesita un valor para aplicar el descuento",
+      });
+    }
+    res
+      .status(200)
+      .json({ message: "Promocion creada correctamente", savedPromotion });
   } catch (error: any) {
     return res
       .status(500)
@@ -23,6 +34,7 @@ exports.createPromotion = async (req: Request, res: Response) => {
 //traer promociones
 exports.getPromotions = async (req: Request, res: Response) => {
   try {
+    return res.status(200).json("desde el get");
   } catch (error: any) {
     return res
       .status(500)

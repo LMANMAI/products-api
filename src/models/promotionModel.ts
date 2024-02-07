@@ -17,7 +17,7 @@ const PromotionSchema = new mongoose.Schema({
     size: Number,
     brand: String,
   },
-  discountMount: Number,
+  discountAmount: Number,
 });
 const Sneaker: Model<PromotionType> = mongoose.model<PromotionType>(
   "Promotion",
