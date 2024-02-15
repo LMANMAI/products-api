@@ -17,6 +17,7 @@ async function createNewPromotion(afectedProduct: any, discountAmount: number) {
       })
     );
   }
+  //verifico como viene la variable para pisar las otras promociones en caso de que la nueva sea igual a una exiistente
   //modifico el precio de los productos y le asigno un valor que sea modified:true
   //guardo la promocion
 
