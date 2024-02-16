@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 const bodyParser = require("body-parser");
-import { helloRoute, sneakersRoute, promotionsRoute } from "./routes";
+import { helloRoute, productsRoute, promotionsRoute } from "./routes";
 require("dotenv").config({ path: ".env" });
 
 const cors = require("cors");
@@ -26,7 +26,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 DataBaseConnection();
 app.use("/", helloRoute);
-app.use("/product", sneakersRoute);
+app.use("/product", productsRoute);
 app.use("/promotion", promotionsRoute);
 
 app.listen(port, () => {

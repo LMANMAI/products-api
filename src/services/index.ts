@@ -1,112 +1,112 @@
-import Sneaker from "../models";
+import Product from "../models";
 import { deleteImage } from "../cloudinary";
-// Función para encontrar todos los sneakers con opciones de paginación
-async function findAllSneakers() {
-  const sneakers = await Sneaker.find();
-  return sneakers;
+// Función para encontrar todos los Products con opciones de paginación
+async function findAllProducts() {
+  const products = await Product.find();
+  return products;
 }
-// Función para encontrar todos los sneakers con filtros
-async function findAllSneakersWithFilter(filterDto: any) {
-  let sneakers = await Sneaker.find();
+// Función para encontrar todos los Products con filtros
+async function findAllProductsWithFilter(filterDto: any) {
+  let products = await Product.find();
   if (filterDto && filterDto.name) {
-    sneakers = sneakers.filter((sneaker: any) =>
-      sneaker.name.toUpperCase().includes(filterDto.name)
+    products = products.filter((product: any) =>
+      product.name.toUpperCase().includes(filterDto.name)
     );
   }
   if (filterDto && filterDto.genre) {
-    sneakers = sneakers.filter((sneaker: any) =>
-      sneaker.genre.toUpperCase().includes(filterDto.genre)
+    products = products.filter((product: any) =>
+      product.genre.toUpperCase().includes(filterDto.genre)
     );
   }
   if (filterDto && filterDto.brand) {
-    sneakers = sneakers.filter((sneaker: any) =>
-      sneaker.brand.toUpperCase().includes(filterDto.brand)
+    products = products.filter((product: any) =>
+      product.brand.toUpperCase().includes(filterDto.brand)
     );
   }
-  return sneakers;
+  return products;
 }
-// Función para encontrar un sneaker por su ID
-async function findSneakerById(sneakerID: string) {
-  const sneaker = await Sneaker.findById(sneakerID);
-  return sneaker;
+// Función para encontrar un Product por su ID
+async function findProductById(productID: string) {
+  const product = await Product.findById(productID);
+  return product;
 }
-// Función para crear un nuevo sneaker
-async function createSneaker(sneakerData: any, image: Express.Multer.File) {
-  const newSneaker = new Sneaker({
-    ...JSON.parse(sneakerData),
+// Función para crear un nuevo Product
+async function createProduct(productData: any, image: Express.Multer.File) {
+  const newProduct = new Product({
+    ...JSON.parse(productData),
     posterPathImage: image,
   });
 
-  const savedSneaker = await newSneaker.save();
-  return savedSneaker;
+  const savedProduct = await newProduct.save();
+  return savedProduct;
 }
-// Función para actualizar un sneaker por su ID
-async function updateSneaker(sneakerID: string, sneakerData: any) {
-  const updatedSneakerDocument = await Sneaker.findByIdAndUpdate(
-    sneakerID,
-    sneakerData,
+// Función para actualizar un Product por su ID
+async function updateProduct(productID: string, productData: any) {
+  const updatedProductDocument = await Product.findByIdAndUpdate(
+    productID,
+    productData,
     { new: true }
   );
-  return updatedSneakerDocument;
+  return updatedProductDocument;
 }
-async function updatePosterImage(sneakerID: string, img: string) {
-  const updatedSneakerDocument = await Sneaker.findByIdAndUpdate(
-    sneakerID,
+async function updatePosterImage(productID: string, img: string) {
+  const updatedProductDocument = await Product.findByIdAndUpdate(
+    productID,
     { $set: { posterPathImage: img } },
     { new: true }
   );
-  return updatedSneakerDocument;
+  return updatedProductDocument;
 }
-// Función para eliminar un sneaker por su ID
-async function deleteSneaker(sneakerID: string) {
-  const prevItem = await Sneaker.findById(sneakerID);
-  const deletedSneaker = await Sneaker.findByIdAndDelete(sneakerID);
+// Función para eliminar un Product por su ID
+async function deleteProduct(productID: string) {
+  const previousItem = await Product.findById(productID);
+  const productProduct = await Product.findByIdAndDelete(productID);
 
-  if (deletedSneaker && prevItem) {
-    await deleteImage(prevItem.posterPathImage);
+  if (productProduct && previousItem) {
+    await deleteImage(previousItem.posterPathImage);
   }
 
-  return deletedSneaker;
+  return productProduct;
 }
-async function deleteImageSneaker(
-  sneakerID: string,
+async function deleteImageProduct(
+  productID: string,
   imageID: string,
   type: string
 ) {
   if (type === "poster") {
-    const updatedSneaker = await Sneaker.findByIdAndUpdate(
-      sneakerID,
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productID,
       { $set: { posterPathImage: "" } },
       { new: true }
     );
 
-    if (updatedSneaker) {
+    if (updatedProduct) {
       await deleteImage(`sneaker/${imageID}`);
     }
-    return updatedSneaker;
+    return updatedProduct;
   } else if (type === "image") {
-    const updatedSneaker = await Sneaker.findByIdAndUpdate(
-      sneakerID,
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productID,
       { $pull: { imgs: `sneaker/${imageID}` } },
       { new: true }
     );
 
-    if (updatedSneaker) {
+    if (updatedProduct) {
       await deleteImage(`sneaker/${imageID}`);
     }
 
-    return updatedSneaker;
+    return updatedProduct;
   }
 }
-// Función para agregar imágenes a un sneaker por su ID
-async function putImagesOnSneaker(sneakerID: any, images: any) {
-  const sneaker = await Sneaker.findById(sneakerID);
-  if (sneaker) {
+// Función para agregar imágenes a un Product por su ID
+async function putImagesOnProduct(productID: any, images: any) {
+  const product = await Product.findById(productID);
+  if (product) {
     if (Array.isArray(images) && images.length <= 3) {
-      const combinedImages = [...sneaker.imgs, ...images].slice(0, 3);
-      sneaker.imgs = combinedImages;
+      const combinedImages = [...product.imgs, ...images].slice(0, 3);
+      product.imgs = combinedImages;
 
-      const updateditem = await sneaker.save();
+      const updateditem = await product.save();
       return updateditem;
     } else {
       throw new Error(
@@ -114,18 +114,18 @@ async function putImagesOnSneaker(sneakerID: any, images: any) {
       );
     }
   } else {
-    throw new Error("Sneaker no encontrada");
+    throw new Error("Producto no encontrado");
   }
 }
 
 module.exports = {
-  findAllSneakers,
-  findAllSneakersWithFilter,
-  findSneakerById,
-  createSneaker,
-  updateSneaker,
-  deleteSneaker,
-  deleteImageSneaker,
-  putImagesOnSneaker,
+  findAllProducts,
+  findAllProductsWithFilter,
+  findProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  deleteImageProduct,
+  putImagesOnProduct,
   updatePosterImage,
 };

@@ -1,4 +1,4 @@
-const sneakerService = require("../services");
+const productService = require("../services");
 import { Request, Response } from "express";
 import { uploadFile } from "../cloudinary";
 
@@ -8,7 +8,7 @@ exports.createProduct = async (req: Request, res: Response) => {
     const { sneaker } = req.body;
     const image = req.file;
     const imageCloud = await uploadFile(image);
-    const newSneaker = await sneakerService.createSneaker(
+    const newSneaker = await productService.createSneaker(
       sneaker,
       imageCloud.public_id
     );
@@ -30,7 +30,7 @@ exports.getAllProducts = async (req: Request, res: Response) => {
   try {
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
-    const sneakers = await sneakerService.findAllSneakers();
+    const sneakers = await productService.findAllSneakers();
     const paginatedSneakers = sneakers.slice(startIndex, endIndex);
     const totalSneakers = sneakers.length;
     const totalPages = Math.ceil(totalSneakers / pageSize);
@@ -71,7 +71,7 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
 
-    const sneakers = await sneakerService.findAllSneakersWithFilter(
+    const sneakers = await productService.findAllSneakersWithFilter(
       searchQuery
     );
     const paginatedSneakers = sneakers.slice(startIndex, endIndex);
@@ -105,7 +105,7 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
 //obtener producto con id
 exports.getOne = async (req: Request, res: Response) => {
   try {
-    const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
+    const sneaker = await productService.findSneakerById(req.params.sneakerID);
     if (!sneaker) throw new Error("Sneaker doesn't exist");
     return res.status(200).json({ sneaker });
   } catch (error: any) {
@@ -127,7 +127,7 @@ exports.insertImagesOnProduct = async (req: Request, res: Response) => {
     });
 
     const uploadedImageIds = await Promise.all(uploadPromises);
-    const sneaker = await sneakerService.putImagesOnSneaker(
+    const sneaker = await productService.putImagesOnSneaker(
       sneakerID,
       uploadedImageIds
     );
@@ -146,7 +146,7 @@ exports.insertImagesOnProduct = async (req: Request, res: Response) => {
 exports.updateProduct = async (req: Request, res: Response) => {
   try {
     const { sneakerID } = req.params;
-    const new_sneaker = await sneakerService.updateSneaker(sneakerID, req.body);
+    const new_sneaker = await productService.updateSneaker(sneakerID, req.body);
     if (!new_sneaker) throw new Error("Cannot update the sneaker");
     res.status(200).json({
       message: "Sneaker updated correct",
@@ -163,7 +163,7 @@ exports.updateProduct = async (req: Request, res: Response) => {
 exports.deleteProductImage = async (req: Request, res: Response) => {
   const { sneakerID, imageID, type } = req.params;
   try {
-    const sneaker = await sneakerService.deleteImageSneaker(
+    const sneaker = await productService.deleteImageSneaker(
       sneakerID,
       imageID,
       type
@@ -181,7 +181,7 @@ exports.deleteProductImage = async (req: Request, res: Response) => {
 //eliminar producto
 exports.deleteProduct = async (req: Request, res: Response) => {
   try {
-    const deleted_sneaker = await sneakerService.deleteSneaker(
+    const deleted_sneaker = await productService.deleteSneaker(
       req.params.sneakerID
     );
     if (!deleted_sneaker)
@@ -202,7 +202,7 @@ exports.updatePosterImage = async (req: Request, res: Response) => {
     const image = req.file;
     const { sneakerID } = req.params;
     const imageCloud = await uploadFile(image);
-    const request = await sneakerService.updatePosterImage(
+    const request = await productService.updatePosterImage(
       sneakerID,
       imageCloud.public_id
     );
