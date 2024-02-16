@@ -9,25 +9,28 @@ exports.getURL = async (req: Request, res: Response) => {
 //crear promocion
 exports.createPromotion = async (req: Request, res: Response) => {
   try {
-    const { afectedProduct, discountAmount } = req.body;
+    const { afectedProduct, discountAmount, replaceExistedPromotion } =
+      req.body;
 
-    // Crea una nueva instancia del modelo Promotion
-    const savedPromotion = await promotionService.createNewPromotion(
-      afectedProduct,
-      discountAmount
-    );
     if (discountAmount === 0) {
       res.status(500).json({
         message: "La promocion necesita un valor para aplicar el descuento",
       });
     }
+
+    // Crea una nueva instancia del modelo Promotion
+    const savedPromotion = await promotionService.createNewPromotion(
+      afectedProduct,
+      discountAmount,
+      replaceExistedPromotion
+    );
     res
       .status(200)
       .json({ message: "Promocion creada correctamente", savedPromotion });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating sneaker", error: error.message });
+      .json({ message: "Error creating promotion", error: error.message });
   }
 };
 
@@ -38,7 +41,7 @@ exports.getPromotions = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating sneaker", error: error.message });
+      .json({ message: "Error creating promotion", error: error.message });
   }
 };
 
@@ -48,6 +51,6 @@ exports.deletePromotion = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating sneaker", error: error.message });
+      .json({ message: "Error creating promotion", error: error.message });
   }
 };

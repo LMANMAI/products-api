@@ -3,7 +3,11 @@ import ProductModel from "../models/index";
 
 async function findAllPromotions() {}
 
-async function createNewPromotion(afectedProduct: any, discountAmount: number) {
+async function createNewPromotion(
+  afectedProduct: any,
+  discountAmount: number,
+  replaceExistedPromotion: boolean
+) {
   let products = await ProductModel.find();
   //me traigo los productos
   if (afectedProduct) {
@@ -17,10 +21,11 @@ async function createNewPromotion(afectedProduct: any, discountAmount: number) {
       })
     );
   }
-  //verifico como viene la variable para pisar las otras promociones en caso de que la nueva sea igual a una exiistente
 
+  //verifico como viene la variable para pisar las otras promociones en caso de que la nueva sea igual a una exiistente
+  const existingPromotions = await PromotionModel.find();
   //modifico el precio de los productos y le asigno un valor que sea modified:true
-  //guardo la promocion
+  //guardo la promocion y los productos con el valor modificado
 
   const newPromotion = new PromotionModel({
     afectedProduct,
