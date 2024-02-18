@@ -14,7 +14,7 @@ exports.createPromotion = async (req: Request, res: Response) => {
 
     if (discountAmount === 0) {
       res.status(500).json({
-        message: "La promocion necesita un valor para aplicar el descuento",
+        message: "The promotion needs a value to apply the discount.",
       });
     }
 
@@ -24,9 +24,7 @@ exports.createPromotion = async (req: Request, res: Response) => {
       discountAmount,
       replaceExistedPromotion
     );
-    res
-      .status(200)
-      .json({ message: "Promocion creada correctamente", savedPromotion });
+    res.status(200).json(savedPromotion);
   } catch (error: any) {
     return res
       .status(500)
@@ -37,20 +35,26 @@ exports.createPromotion = async (req: Request, res: Response) => {
 //traer promociones
 exports.getPromotions = async (req: Request, res: Response) => {
   try {
-    return res.status(200).json("desde el get");
+    const currentPromotions = await promotionService.findAllPromotions();
+    return res.status(200).json(currentPromotions);
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating promotion", error: error.message });
+      .json({ message: "Error cathing promotions", error: error.message });
   }
 };
 
 //eliminar promocion
 exports.deletePromotion = async (req: Request, res: Response) => {
   try {
+    const { promotionId } = req.params;
+    const promotionDeleted = await promotionService.deletePromotion(
+      promotionId
+    );
+    return res.status(200).json(promotionDeleted);
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating promotion", error: error.message });
+      .json({ message: "Error deleting promotion", error: error.message });
   }
 };

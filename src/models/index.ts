@@ -6,6 +6,12 @@ interface Size {
   size: string;
   qty: string;
 }
+interface Discount {
+  promotionActive: boolean;
+  previosPrice: number;
+  discountPercentage: number;
+}
+
 export interface ProductModel {
   name: string;
   relaseYear: string;
@@ -17,6 +23,7 @@ export interface ProductModel {
   imgs: string[];
   genre: string;
   sizes: Size[];
+  hasModifications: Discount;
 }
 const sizeSchema = new mongoose.Schema({
   size: String,
@@ -34,9 +41,14 @@ const ProductSchema = new mongoose.Schema({
   imgs: [{ type: String, max: 3 }],
   genre: { type: String, trim: true },
   sizes: [sizeSchema],
+  hasModifications: {
+    promotionActive: Boolean,
+    previosPrice: Number,
+    discountPercentage: Number,
+  },
 });
 const Product: Model<ProductType> = mongoose.model<ProductType>(
-  "Product",
+  "Sneaker",
   ProductSchema
 );
 

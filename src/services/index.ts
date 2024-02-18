@@ -81,18 +81,18 @@ async function deleteImageProduct(
     );
 
     if (updatedProduct) {
-      await deleteImage(`sneaker/${imageID}`);
+      await deleteImage(`product/${imageID}`);
     }
     return updatedProduct;
   } else if (type === "image") {
     const updatedProduct = await Product.findByIdAndUpdate(
       productID,
-      { $pull: { imgs: `sneaker/${imageID}` } },
+      { $pull: { imgs: `product/${imageID}` } },
       { new: true }
     );
 
     if (updatedProduct) {
-      await deleteImage(`sneaker/${imageID}`);
+      await deleteImage(`product/${imageID}`);
     }
 
     return updatedProduct;
@@ -110,11 +110,11 @@ async function putImagesOnProduct(productID: any, images: any) {
       return updateditem;
     } else {
       throw new Error(
-        "Las imagenes adicionales del producto estan limitadas a un maximo de 3."
+        "Additional product images are limited to a maximum of 3."
       );
     }
   } else {
-    throw new Error("Producto no encontrado");
+    throw new Error("Product not found");
   }
 }
 

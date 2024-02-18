@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 
-export class GetSneakersDto {
+export class GetProductsDto {
   brand?: string;
   name?: string;
   genre?: string;
@@ -10,7 +10,7 @@ interface ISize {
   size: string;
   qty: string;
 }
-export interface ISneaker extends Document {
+export interface IProduct extends Document {
   readonly name: string;
   readonly relaseYear: string;
   imgs: string[];

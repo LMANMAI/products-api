@@ -3,7 +3,10 @@ const PromotionController = require("../controllers/promotionController");
 const router = express.Router();
 
 router.get("/", PromotionController.getURL);
-router.get("/getPromotion", PromotionController.getPromotions);
+router.get("/getPromotions", PromotionController.getPromotions);
 router.post("/createPromotion", PromotionController.createPromotion);
-router.delete("/deletePromotion", PromotionController.createPromotion);
+router.delete(
+  "/deletePromotion/:promotionId",
+  PromotionController.deletePromotion
+);
 export default router;
