@@ -9,13 +9,13 @@ const cors = require("cors");
 const DataBaseConnection = async () => {
   try {
     if (!process.env.DB_URL) {
-      throw new Error("La variable de entorno DB no está definida.");
+      throw new Error("DB environment variable is not defined.");
     }
 
     await mongoose.connect(process.env.DB_URL);
-    console.log("Base de datos conectada");
+    console.log("Connected database");
   } catch (error) {
-    console.error("Error al conectar a la base de datos:", error);
+    console.error("Error connecting to database:", error);
   }
 };
 
@@ -30,5 +30,5 @@ app.use("/product", productsRoute);
 app.use("/promotion", promotionsRoute);
 
 app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log(`Server listening on port${port}`);
 });
