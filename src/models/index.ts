@@ -48,7 +48,7 @@ const ProductSchema = new mongoose.Schema({
   },
 });
 const Product: Model<ProductType> = mongoose.model<ProductType>(
-  "Sneaker",
+  "Product",
   ProductSchema
 );
 
