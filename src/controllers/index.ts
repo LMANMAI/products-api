@@ -1,26 +1,26 @@
-const sneakerService = require("../services");
+const productService = require("../services");
 import { Request, Response } from "express";
 import { uploadFile } from "../cloudinary";
 
 //crear producto
 exports.createProduct = async (req: Request, res: Response) => {
   try {
-    const { sneaker } = req.body;
+    const { product } = req.body;
     const image = req.file;
     const imageCloud = await uploadFile(image);
-    const newSneaker = await sneakerService.createSneaker(
-      sneaker,
+    const newProduct = await productService.createProduct(
+      product,
       imageCloud.public_id
     );
 
     return res.status(200).json({
-      message: "Sneaker created successfully",
-      sneaker: newSneaker,
+      message: "Product created successfully",
+      product: newProduct,
     });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error creating sneaker", error: error.message });
+      .json({ message: "Error creating product", error: error.message });
   }
 };
 //obtener las productos
@@ -30,22 +30,22 @@ exports.getAllProducts = async (req: Request, res: Response) => {
   try {
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
-    const sneakers = await sneakerService.findAllSneakers();
-    const paginatedSneakers = sneakers.slice(startIndex, endIndex);
-    const totalSneakers = sneakers.length;
-    const totalPages = Math.ceil(totalSneakers / pageSize);
+    const products = await productService.findAllProducts();
+    const paginatedproducts = products.slice(startIndex, endIndex);
+    const totalproducts = products.length;
+    const totalPages = Math.ceil(totalproducts / pageSize);
 
     res.status(200).json({
-      message: "Sneakers obtenidos con éxito",
-      data: paginatedSneakers,
-      totalSneakers,
+      message: "Products successfully obtained",
+      data: paginatedproducts,
+      totalproducts,
       totalPages,
       status: 200,
       currenPage: page,
     });
   } catch (error: any) {
     res.status(500).json({
-      message: "Error al obtener los sneakers",
+      message: "Error when obtaining the products",
       error: error.message,
     });
   }
@@ -71,24 +71,24 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
 
-    const sneakers = await sneakerService.findAllSneakersWithFilter(
+    const products = await productService.findAllproductsWithFilter(
       searchQuery
     );
-    const paginatedSneakers = sneakers.slice(startIndex, endIndex);
-    const totalSneakers = sneakers.length;
-    const totalPages = Math.ceil(totalSneakers / pageSize);
+    const paginatedproducts = products.slice(startIndex, endIndex);
+    const totalproducts = products.length;
+    const totalPages = Math.ceil(totalproducts / pageSize);
 
-    if (sneakers.length === 0) {
+    if (products.length === 0) {
       res.status(200).json({
-        message: "No sneakers found with the specified criteria",
+        message: "No products found with the specified criteria",
         data: [],
         status: 204,
       });
     } else {
       res.status(200).json({
-        message: "Sneakers bringing successfully",
-        data: paginatedSneakers,
-        totalSneakers,
+        message: "products bringing successfully",
+        data: paginatedproducts,
+        totalproducts,
         totalPages,
         currenPage: page,
         status: 200,
@@ -96,7 +96,7 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     return res.status(500).json({
-      message: "Error bringing sneaker with the specified criteria",
+      message: "Error bringing product with the specified criteria",
       error: error.message,
       status: 500,
     });
@@ -105,12 +105,12 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
 //obtener producto con id
 exports.getOne = async (req: Request, res: Response) => {
   try {
-    const sneaker = await sneakerService.findSneakerById(req.params.sneakerID);
-    if (!sneaker) throw new Error("Sneaker doesn't exist");
-    return res.status(200).json({ sneaker });
+    const product = await productService.findProductById(req.params.productID);
+    if (!product) throw new Error("Product doesn't exist");
+    return res.status(200).json({ product });
   } catch (error: any) {
     return res.status(500).json({
-      message: "Error bringing sneaker",
+      message: "Error bringing product",
       error: error.message,
       status: 500,
     });
@@ -119,7 +119,7 @@ exports.getOne = async (req: Request, res: Response) => {
 //agregar imagenes al producto
 exports.insertImagesOnProduct = async (req: Request, res: Response) => {
   try {
-    const { sneakerID } = req.params;
+    const { productId } = req.params;
     const images = req.files as Express.Multer.File[];
     const uploadPromises = images.map(async (img: Express.Multer.File) => {
       const imageCloud = await uploadFile(img);
@@ -127,52 +127,52 @@ exports.insertImagesOnProduct = async (req: Request, res: Response) => {
     });
 
     const uploadedImageIds = await Promise.all(uploadPromises);
-    const sneaker = await sneakerService.putImagesOnSneaker(
-      sneakerID,
+    const product = await productService.putImagesOnProduct(
+      productId,
       uploadedImageIds
     );
     res.status(200).json({
-      message: "Sneaker updated correct",
-      sneaker,
+      message: "Product updated correct",
+      product,
       status: 200,
     });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error updateding sneaker", error: error.message });
+      .json({ message: "Error updateding product", error: error.message });
   }
 };
 //editar proucto
 exports.updateProduct = async (req: Request, res: Response) => {
   try {
-    const { sneakerID } = req.params;
-    const new_sneaker = await sneakerService.updateSneaker(sneakerID, req.body);
-    if (!new_sneaker) throw new Error("Cannot update the sneaker");
+    const { productId } = req.params;
+    const newProduct = await productService.updateProduct(productId, req.body);
+    if (!newProduct) throw new Error("Cannot update the product");
     res.status(200).json({
-      message: "Sneaker updated correct",
-      new_sneaker,
+      message: "Product updated correct",
+      newProduct,
       status: 200,
     });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error updateding sneaker", error: error.message });
+      .json({ message: "Error updateding product", error: error.message });
   }
 };
 //eliminar imagen de un producto
 exports.deleteProductImage = async (req: Request, res: Response) => {
-  const { sneakerID, imageID, type } = req.params;
+  const { productId, imageID, type } = req.params;
   try {
-    const sneaker = await sneakerService.deleteImageSneaker(
-      sneakerID,
+    const product = await productService.deleteImageProduct(
+      productId,
       imageID,
       type
     );
-    if (!sneaker) throw new Error("Sneaker doesn't exist");
-    return res.status(200).json({ sneaker });
+    if (!product) throw new Error("Product doesn't exist");
+    return res.status(200).json({ product });
   } catch (error: any) {
     return res.status(500).json({
-      message: "Error bringing sneaker",
+      message: "Error bringing product",
       error: error.message,
       status: 500,
     });
@@ -181,39 +181,39 @@ exports.deleteProductImage = async (req: Request, res: Response) => {
 //eliminar producto
 exports.deleteProduct = async (req: Request, res: Response) => {
   try {
-    const deleted_sneaker = await sneakerService.deleteSneaker(
-      req.params.sneakerID
+    const deletedProduct = await productService.deleteProduct(
+      req.params.productId
     );
-    if (!deleted_sneaker)
-      throw new Error("Sneaker doesn't exists or already been deleted");
+    if (!deletedProduct)
+      throw new Error("Product doesn't exists or already been deleted");
     res.status(200).json({
-      message: "this was the sneaker deleted",
-      deleted_sneaker,
+      message: "this was the product deleted",
+      deletedProduct,
       status: 200,
     });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error deleting sneaker", error: error });
+      .json({ message: "Error deleting product", error: error });
   }
 };
 exports.updatePosterImage = async (req: Request, res: Response) => {
   try {
     const image = req.file;
-    const { sneakerID } = req.params;
+    const { productId } = req.params;
     const imageCloud = await uploadFile(image);
-    const request = await sneakerService.updatePosterImage(
-      sneakerID,
+    const request = await productService.updatePosterImage(
+      productId,
       imageCloud.public_id
     );
     return res.status(200).json({
-      message: "Sneaker created successfully",
+      message: "Product created successfully",
       sneaker: request,
       status: 200,
     });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Error updating sneaker", error: error.message });
+      .json({ message: "Error updating product", error: error.message });
   }
 };

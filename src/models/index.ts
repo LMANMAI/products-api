@@ -1,12 +1,18 @@
 import * as mongoose from "mongoose";
 import { Model } from "mongoose";
-type SneakerType = SneakerModel & mongoose.Document;
+type ProductType = ProductModel & mongoose.Document;
 
 interface Size {
   size: string;
   qty: string;
 }
-export interface SneakerModel {
+interface Discount {
+  promotionActive: boolean;
+  previosPrice: number;
+  discountPercentage: number;
+}
+
+export interface ProductModel {
   name: string;
   relaseYear: string;
   posterPathImage: string;
@@ -17,13 +23,14 @@ export interface SneakerModel {
   imgs: string[];
   genre: string;
   sizes: Size[];
+  hasModifications: Discount;
 }
 const sizeSchema = new mongoose.Schema({
   size: String,
   qty: String,
 });
 
-const SneakerSchema = new mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
   name: { trim: true, type: String },
   relaseYear: String,
   posterPathImage: String,
@@ -34,10 +41,15 @@ const SneakerSchema = new mongoose.Schema({
   imgs: [{ type: String, max: 3 }],
   genre: { type: String, trim: true },
   sizes: [sizeSchema],
+  hasModifications: {
+    promotionActive: Boolean,
+    previosPrice: Number,
+    discountPercentage: Number,
+  },
 });
-const Sneaker: Model<SneakerType> = mongoose.model<SneakerType>(
-  "Sneaker",
-  SneakerSchema
+const Product: Model<ProductType> = mongoose.model<ProductType>(
+  "Product",
+  ProductSchema
 );
 
-export default Sneaker;
+export default Product;
