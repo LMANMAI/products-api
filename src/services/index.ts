@@ -10,7 +10,7 @@ async function findAllproductsWithFilter(searchParams: any) {
   let products = await Product.find();
   if (searchParams && searchParams.name) {
     products = products.filter((product: any) =>
-      product.name.toUpperCase().includes(searchParams.name)
+      product.name.includes(searchParams.name)
     );
   }
   if (searchParams && searchParams.genre) {
