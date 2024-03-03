@@ -101,7 +101,7 @@ async function createNewPromotion(
 async function deletePromotion(promotionId: string) {
   const previousItem = await PromotionModel.findByIdAndDelete(promotionId);
   if (previousItem) {
-    return { message: "Promotion removed correctly" };
+    return { message: "Promotion removed correctly", status: 200 };
   } else {
     return {
       message:
