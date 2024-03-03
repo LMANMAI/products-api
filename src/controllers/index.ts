@@ -9,7 +9,7 @@ exports.createProduct = async (req: Request, res: Response) => {
     const image = req.file;
     const imageCloud = await uploadFile(image);
     const newProduct = await productService.createProduct(
-      product,
+      JSON.parse(product),
       imageCloud.public_id
     );
 

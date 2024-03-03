@@ -32,8 +32,15 @@ async function findProductById(productID: string) {
 }
 // Función para crear un nuevo Product
 async function createProduct(productData: any, image: Express.Multer.File) {
+  const totalQty = productData.sizes.reduce(
+    (accumulator: any, currentValue: any) =>
+      accumulator + parseInt(currentValue.qty),
+    0
+  );
+
   const newProduct = new Product({
-    ...JSON.parse(productData),
+    ...productData,
+    quantity: totalQty,
     posterPathImage: image,
   });
 
@@ -42,9 +49,20 @@ async function createProduct(productData: any, image: Express.Multer.File) {
 }
 // Función para actualizar un Product por su ID
 async function updateProduct(productID: string, productData: any) {
+  const totalQty = productData.sizes.reduce(
+    (accumulator: any, currentValue: any) =>
+      accumulator + parseInt(currentValue.qty),
+    0
+  );
+
+  const updatedProductData = {
+    ...productData,
+    totalQty: totalQty,
+  };
+
   const updatedProductDocument = await Product.findByIdAndUpdate(
     productID,
-    productData,
+    updatedProductData,
     { new: true }
   );
   return updatedProductDocument;
