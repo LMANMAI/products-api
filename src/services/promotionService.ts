@@ -71,11 +71,11 @@ async function createNewPromotion(
         { new: true }
       );
 
-      const rees = await updateProducts(products, discountAmount);
-      console.log(rees);
+      await updateProducts(products, discountAmount);
       return {
         message: "Promotion replaced correctly",
         existingPromotion,
+        status: 200,
       };
     } else {
       return {
@@ -88,7 +88,11 @@ async function createNewPromotion(
   console.log(rees);
   // Guarda la nueva promoción en la base de datos
   const savedPromotion = await newPromotion.save();
-  return { message: "Promotion created correctly", savedPromotion };
+  return {
+    message: "Promotion created correctly",
+    savedPromotion,
+    status: 200,
+  };
 }
 async function deletePromotion(promotionId: string) {
   const previousItem = await PromotionModel.findByIdAndDelete(promotionId);
