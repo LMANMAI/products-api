@@ -27,7 +27,11 @@ async function updateProducts(products: any[], discountAmount: number) {
 
 async function findAllPromotions() {
   let currentPromotions = await PromotionModel.find();
-  return { message: "Promociones actualmente vigentes", currentPromotions };
+  return {
+    message: "Promotions currently available",
+    currentPromotions,
+    status: 200,
+  };
 }
 
 async function createNewPromotion(
