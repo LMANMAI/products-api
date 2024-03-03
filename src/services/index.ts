@@ -57,7 +57,7 @@ async function updateProduct(productID: string, productData: any) {
 
   const updatedProductData = {
     ...productData,
-    totalQty: totalQty,
+    quantity: totalQty,
   };
 
   const updatedProductDocument = await Product.findByIdAndUpdate(
