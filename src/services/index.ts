@@ -6,21 +6,21 @@ async function findAllProducts() {
   return products;
 }
 // Función para encontrar todos los Products con filtros
-async function findAllProductsWithFilter(filterDto: any) {
+async function findAllproductsWithFilter(searchParams: any) {
   let products = await Product.find();
-  if (filterDto && filterDto.name) {
+  if (searchParams && searchParams.name) {
     products = products.filter((product: any) =>
-      product.name.toUpperCase().includes(filterDto.name)
+      product.name.toUpperCase().includes(searchParams.name)
     );
   }
-  if (filterDto && filterDto.genre) {
+  if (searchParams && searchParams.genre) {
     products = products.filter((product: any) =>
-      product.genre.toUpperCase().includes(filterDto.genre)
+      product.genre.toUpperCase().includes(searchParams.genre)
     );
   }
-  if (filterDto && filterDto.brand) {
+  if (searchParams && searchParams.brand) {
     products = products.filter((product: any) =>
-      product.brand.toUpperCase().includes(filterDto.brand)
+      product.brand.toUpperCase().includes(searchParams.brand)
     );
   }
   return products;
@@ -120,7 +120,7 @@ async function putImagesOnProduct(productID: any, images: any) {
 
 module.exports = {
   findAllProducts,
-  findAllProductsWithFilter,
+  findAllproductsWithFilter,
   findProductById,
   createProduct,
   updateProduct,
