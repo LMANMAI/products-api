@@ -14,7 +14,7 @@ interface Discount {
 
 export interface ProductModel {
   name: string;
-  relaseYear: string;
+  releaseYear: string;
   posterPathImage: string;
   price: number;
   quantity: number;
@@ -32,7 +32,7 @@ const sizeSchema = new mongoose.Schema({
 
 const ProductSchema = new mongoose.Schema({
   name: { trim: true, type: String },
-  relaseYear: String,
+  releaseYear: String,
   posterPathImage: String,
   price: Number,
   quantity: Number,
