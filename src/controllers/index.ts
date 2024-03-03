@@ -105,7 +105,7 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
 //obtener producto con id
 exports.getOne = async (req: Request, res: Response) => {
   try {
-    const product = await productService.findProductById(req.params.productID);
+    const product = await productService.findProductById(req.params.productId);
     if (!product) throw new Error("Product doesn't exist");
     return res.status(200).json({ product });
   } catch (error: any) {
