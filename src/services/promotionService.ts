@@ -47,6 +47,7 @@ async function createNewPromotion(
     discountAmount,
   });
 
+  console.log(afectedProduct);
   //me traigo los productos
   if (afectedProduct) {
     const filters = Object.entries(afectedProduct);
@@ -63,16 +64,20 @@ async function createNewPromotion(
   //verifico como viene la variable para pisar las otras promociones en caso de que la nueva sea igual a una exiistente
   const existingPromotions = await PromotionModel.find();
   const isDuplicate = existingPromotions.some((promotion) => {
+    console.log(promotion);
     return (
-      JSON.stringify(promotion.afectedProduct) ===
-      JSON.stringify(afectedProduct)
+      promotion.afectedProduct.brand === afectedProduct.brand &&
+      promotion.afectedProduct.genre === afectedProduct.genre
     );
   });
 
   if (isDuplicate) {
     if (replaceExistedPromotion) {
       const existingPromotion = await PromotionModel.findOneAndUpdate(
-        { afectedProduct: afectedProduct },
+        {
+          "afectedProduct.brand": afectedProduct.brand,
+          "afectedProduct.genre": afectedProduct.genre,
+        },
         { discountAmount: discountAmount },
         { new: true }
       );
