@@ -9,8 +9,12 @@ exports.getURL = async (req: Request, res: Response) => {
 //crear promocion
 exports.createPromotion = async (req: Request, res: Response) => {
   try {
-    const { afectedProduct, discountAmount, replaceExistedPromotion } =
-      req.body;
+    const {
+      afectedProduct,
+      discountAmount,
+      replaceExistedPromotion,
+      discountNameId,
+    } = req.body;
 
     if (discountAmount === 0) {
       res.status(500).json({
@@ -22,6 +26,7 @@ exports.createPromotion = async (req: Request, res: Response) => {
     const savedPromotion = await promotionService.createNewPromotion(
       afectedProduct,
       discountAmount,
+      discountNameId,
       replaceExistedPromotion
     );
     res.status(200).json(savedPromotion);

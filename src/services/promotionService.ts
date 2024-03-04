@@ -37,11 +37,13 @@ async function findAllPromotions() {
 async function createNewPromotion(
   afectedProduct: any,
   discountAmount: number,
+  discountNameId: string,
   replaceExistedPromotion: boolean
 ) {
   let products = await ProductModel.find();
   const newPromotion = new PromotionModel({
     afectedProduct,
+    discountNameId,
     discountAmount,
   });
 
