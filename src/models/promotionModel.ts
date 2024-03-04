@@ -7,6 +7,7 @@ export interface PromotionModel {
   };
   discountMount: number;
   replaceExistedPromotion: boolean;
+  discountNameId: string;
 }
 
 type PromotionType = PromotionModel & mongoose.Document;
@@ -18,6 +19,7 @@ const PromotionSchema = new mongoose.Schema({
   },
   discountAmount: Number,
   replaceExistedPromotion: Boolean,
+  discountNameId: String,
 });
 const Product: Model<PromotionType> = mongoose.model<PromotionType>(
   "Promotion",
