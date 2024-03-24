@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 const bodyParser = require("body-parser");
 import { helloRoute, productsRoute, promotionsRoute } from "./routes";
-require("dotenv").config({ path: ".env" });
+require("dotenv").config();
 
 const cors = require("cors");
 
