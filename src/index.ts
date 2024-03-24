@@ -25,6 +25,7 @@ app.use(cors());
 app.use(express.json());
 const port = process.env.PORT || 3000;
 DataBaseConnection();
+
 app.use("/", helloRoute);
 app.use("/product", productsRoute);
 app.use("/promotion", promotionsRoute);
