@@ -8,7 +8,9 @@ const upload = multer({ storage: storage });
 
 router.get("/", ProductController.getAllProducts);
 router.get("/search", ProductController.getAllProductsWithFilters);
+router.get("/last", ProductController.getLastProducts);
 router.get("/:productId", ProductController.getOne);
+
 router.post("/create", upload.single("image"), ProductController.createProduct);
 router.put(
   "/productimages/:productId",

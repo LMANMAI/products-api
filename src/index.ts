@@ -30,5 +30,5 @@ app.use("/product", productsRoute);
 app.use("/promotion", promotionsRoute);
 
 app.listen(port, () => {
-  console.log(`Server listening on port${port}`);
+  console.log(`Server listening on port ${port}`);
 });

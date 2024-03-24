@@ -102,6 +102,7 @@ exports.getAllProductsWithFilters = async (req: Request, res: Response) => {
     });
   }
 };
+
 //obtener producto con id
 exports.getOne = async (req: Request, res: Response) => {
   try {
@@ -113,6 +114,34 @@ exports.getOne = async (req: Request, res: Response) => {
       message: "Error bringing product",
       error: error.message,
       status: 500,
+    });
+  }
+};
+
+exports.getLastProducts = async (req: Request, res: Response) => {
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 5;
+  try {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const products = await productService.findLastProducts();
+    const paginatedproducts = products.slice(startIndex, endIndex);
+
+    const totalproducts = products.length;
+    const totalPages = Math.ceil(totalproducts / pageSize);
+
+    res.status(200).json({
+      message: "Products successfully obtained",
+      data: paginatedproducts,
+      totalproducts,
+      totalPages,
+      status: 200,
+      currenPage: page,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      message: "Error when obtaining the products",
+      error: error.message,
     });
   }
 };

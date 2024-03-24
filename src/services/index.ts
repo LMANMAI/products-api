@@ -136,6 +136,11 @@ async function putImagesOnProduct(productID: any, images: any) {
   }
 }
 
+async function findLastProducts() {
+  const products = await Product.find().sort({ _id: -1 });
+  return products;
+}
+
 module.exports = {
   findAllProducts,
   findAllproductsWithFilter,
@@ -146,4 +151,5 @@ module.exports = {
   deleteImageProduct,
   putImagesOnProduct,
   updatePosterImage,
+  findLastProducts,
 };
