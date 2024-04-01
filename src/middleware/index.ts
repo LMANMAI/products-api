@@ -1,4 +1,6 @@
 import express from "express";
+require("dotenv").config();
+
 const apiKeys = {
   apiKey1: process.env.API_KEY,
   apiKey2: process.env.CLOUDINARY_API_KEY,
