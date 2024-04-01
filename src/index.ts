@@ -1,11 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 const bodyParser = require("body-parser");
 import { apiKeyVerification } from "./middleware";
-import { helloRoute, productsRoute, promotionsRoute } from "./routes";
+import {
+  helloRoute,
+  productsRoute,
+  promotionsRoute,
+  checkoutRoute,
+} from "./routes";
 require("dotenv").config();
-
-const cors = require("cors");
 
 const DataBaseConnection = async () => {
   try {
@@ -31,6 +35,7 @@ DataBaseConnection();
 app.use("/", helloRoute);
 app.use("/product", apiKeyVerification, productsRoute);
 app.use("/promotion", apiKeyVerification, promotionsRoute);
+app.use("/checkout", checkoutRoute);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
