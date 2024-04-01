@@ -1,3 +1,4 @@
+import Product from "../models";
 import { Request, Response } from "express";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 
@@ -6,30 +7,34 @@ const client = new MercadoPagoConfig({
 });
 
 exports.createPreference = async (req: Request, res: Response) => {
-  const { title, quantity, price, productID } = req.body;
   try {
+    const productsData = req.body.map((item: any) => {
+      return {
+        id: item.productID,
+        title: item.title,
+        quantity: Number(item.quantity),
+        unit_price: Number(item.price),
+        currency_id: "ARS",
+      };
+    });
+
     const body = {
-      items: [
-        {
-          id: productID,
-          title: title,
-          quantity: Number(quantity),
-          unit_price: Number(price),
-          currency_id: "ARS",
-        },
-      ],
+      items: productsData,
       back_urls: {
-        success: "http://localhost:5173/checkout",
-        failure: "http://localhost:5173/checkout",
-        pending: "http://localhost:5173/checkout",
+        success: process.env.BACK_URL,
+        failure: process.env.BACK_URL,
+        pending: process.env.BACK_URL,
       },
       auto_return: "approved",
+      shipments: {
+        cost: 1,
+        mode: "not_specified",
+      },
+      marketplace: "Sneakers-HUB",
+      additional_info: "Sneakers-HUB",
     };
     const preference = new Preference(client);
     const result = await preference.create({ body });
-
-    console.log(result, "result");
-    console.log(preference, "preference");
     res.json({
       id: result.id,
     });
@@ -38,5 +43,50 @@ exports.createPreference = async (req: Request, res: Response) => {
     res
       .status(500)
       .json({ msg: `Error al crear la preferencia: (${error.message})` });
+  }
+};
+
+exports.getPaymentInfo = async (req: Request, res: Response) => {
+  try {
+    const paymentId =
+      req.query.payment && typeof req.query.payment === "string"
+        ? req.query.payment
+        : null;
+    res.json({
+      Payment: paymentId,
+      Status: req.query.status,
+      MerchantOrder: req.query.merchant_order_id,
+    });
+  } catch (error: any) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ msg: `Error al traer la información: (${error.message})` });
+  }
+};
+
+exports.completeOrder = async (req: Request, res: Response) => {
+  try {
+    const basketItems = req.body.basket;
+    for (const item of basketItems) {
+      const product = await Product.findById(item._id);
+
+      if (product) {
+        product.sizes.forEach((size: any) => {
+          if (size.size === item.size) {
+            size.qty -= item.quantity;
+          }
+        });
+
+        await product.save();
+      }
+    }
+
+    res.json({ msg: "Productos descontados exitosamente", status: 200 });
+  } catch (error: any) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ msg: `Error al completar la compra: (${error.message})` });
   }
 };
