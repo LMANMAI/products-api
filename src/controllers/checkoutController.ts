@@ -21,9 +21,9 @@ exports.createPreference = async (req: Request, res: Response) => {
     const body = {
       items: productsData,
       back_urls: {
-        success: "https://fementorpractica.vercel.app/postcheckout/-",
-        failure: "https://fementorpractica.vercel.app/checkout",
-        pending: "https://fementorpractica.vercel.app/checkout",
+        success: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
+        failure: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
+        pending: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
       },
       auto_return: "approved",
       shipments: {
