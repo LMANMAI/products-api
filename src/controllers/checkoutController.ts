@@ -21,17 +21,15 @@ exports.createPreference = async (req: Request, res: Response) => {
     const body = {
       items: productsData,
       back_urls: {
-        success: "http://localhost:5173/postcheckout/-",
-        failure: "http://localhost:5173/checkout",
-        pending: "http://localhost:5173/checkout",
+        success: "https://fementorpractica.vercel.app/postcheckout/-",
+        failure: "https://fementorpractica.vercel.app/checkout",
+        pending: "https://fementorpractica.vercel.app/checkout",
       },
       auto_return: "approved",
       shipments: {
         cost: 1,
         mode: "not_specified",
       },
-      marketplace: "Sneakers-HUB",
-      additional_info: "Sneakers-HUB",
     };
     const preference = new Preference(client);
     const result = await preference.create({ body });
