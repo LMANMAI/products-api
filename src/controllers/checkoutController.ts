@@ -21,9 +21,9 @@ exports.createPreference = async (req: Request, res: Response) => {
     const body = {
       items: productsData,
       back_urls: {
-        success: process.env.BACK_URL,
-        failure: process.env.BACK_URL,
-        pending: process.env.BACK_URL,
+        success: "http://localhost:5173/postcheckout/-",
+        failure: "http://localhost:5173/checkout",
+        pending: "http://localhost:5173/checkout",
       },
       auto_return: "approved",
       shipments: {
