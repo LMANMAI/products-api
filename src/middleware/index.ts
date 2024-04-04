@@ -12,6 +12,7 @@ export function apiKeyVerification(
   next: express.NextFunction
 ) {
   const apiKey = req.headers["api-key"];
+
   if (!apiKey || (apiKey !== apiKeys.apiKey1 && apiKey !== apiKeys.apiKey2)) {
     return res
       .status(401)

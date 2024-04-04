@@ -101,15 +101,48 @@ async function createNewPromotion(
     status: 200,
   };
 }
-async function deletePromotion(promotionId: string) {
-  const previousItem = await PromotionModel.findByIdAndDelete(promotionId);
-  if (previousItem) {
-    return { message: "Promotion removed correctly", status: 200 };
-  } else {
-    return {
-      message:
-        "No promotion was found to delete, it may have been deleted previously",
-    };
+async function deletePromotion(promotionId: string, afectedProduct: any) {
+  let products = await ProductModel.find();
+
+  if (afectedProduct) {
+    const filters = Object.entries(afectedProduct);
+    products = products.filter((product: any) =>
+      filters.every(([key, value]) => {
+        if (typeof value === "string" && product[key]) {
+          return product[key].toUpperCase().includes(value.toUpperCase());
+        }
+        return true;
+      })
+    );
+  }
+
+  const promises = products.map(async (product: any) => {
+    // Actualizar el precio y hasModifications
+    return ProductModel.findOneAndUpdate(
+      { _id: product._id },
+      {
+        price: product.hasModifications.previosPrice,
+        hasModifications: {
+          promotionActive: false,
+          previosPrice: 0,
+          discountPercentage: 0,
+        },
+      },
+      { new: true }
+    );
+  });
+
+  const res = await Promise.all(promises);
+  if (res) {
+    const previousItem = await PromotionModel.findByIdAndDelete(promotionId);
+    if (previousItem) {
+      return { message: "Promotion removed correctly", status: 200 };
+    } else {
+      return {
+        message:
+          "No promotion was found to delete, it may have been deleted previously",
+      };
+    }
   }
 }
 

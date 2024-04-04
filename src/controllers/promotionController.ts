@@ -53,9 +53,12 @@ exports.getPromotions = async (req: Request, res: Response) => {
 exports.deletePromotion = async (req: Request, res: Response) => {
   try {
     const { promotionId } = req.params;
+    const { afectedProduct } = req.body;
     const promotionDeleted = await promotionService.deletePromotion(
-      promotionId
+      promotionId,
+      afectedProduct
     );
+
     return res.status(200).json(promotionDeleted);
   } catch (error: any) {
     return res
