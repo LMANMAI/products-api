@@ -99,18 +99,18 @@ async function deleteImageProduct(
     );
 
     if (updatedProduct) {
-      await deleteImage(`product/${imageID}`);
+      await deleteImage(`sneaker/${imageID}`);
     }
     return updatedProduct;
   } else if (type === "image") {
     const updatedProduct = await Product.findByIdAndUpdate(
       productID,
-      { $pull: { imgs: `product/${imageID}` } },
+      { $pull: { imgs: `sneaker/${imageID}` } },
       { new: true }
     );
 
     if (updatedProduct) {
-      await deleteImage(`product/${imageID}`);
+      await deleteImage(`sneaker/${imageID}`);
     }
 
     return updatedProduct;
