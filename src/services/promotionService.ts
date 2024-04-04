@@ -101,21 +101,18 @@ async function createNewPromotion(
     status: 200,
   };
 }
-async function deletePromotion(promotionId: string, afectedProduct: any) {
-  let products = await ProductModel.find();
-
-  if (afectedProduct) {
-    const filters = Object.entries(afectedProduct);
-    products = products.filter((product: any) =>
-      filters.every(([key, value]) => {
-        if (typeof value === "string" && product[key]) {
-          return product[key].toUpperCase().includes(value.toUpperCase());
-        }
-        return true;
-      })
-    );
+async function deletePromotion(promotionId: string, affectedProduct: any) {
+  let filters: Record<string, any> = {};
+  if (affectedProduct) {
+    filters = Object.entries(affectedProduct).reduce((acc, [key, value]) => {
+      if (typeof value === "string") {
+        acc[key] = { $regex: new RegExp(value, "i") };
+      }
+      return acc;
+    }, {} as Record<string, any>);
   }
 
+  const products = await ProductModel.find(filters);
   const promises = products.map(async (product: any) => {
     // Actualizar el precio y hasModifications
     return ProductModel.findOneAndUpdate(
@@ -133,6 +130,7 @@ async function deletePromotion(promotionId: string, afectedProduct: any) {
   });
 
   const res = await Promise.all(promises);
+
   if (res) {
     const previousItem = await PromotionModel.findByIdAndDelete(promotionId);
     if (previousItem) {

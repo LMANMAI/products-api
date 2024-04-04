@@ -54,6 +54,7 @@ exports.deletePromotion = async (req: Request, res: Response) => {
   try {
     const { promotionId } = req.params;
     const { afectedProduct } = req.body;
+
     const promotionDeleted = await promotionService.deletePromotion(
       promotionId,
       afectedProduct
