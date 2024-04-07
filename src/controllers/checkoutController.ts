@@ -103,3 +103,18 @@ exports.getUserOrders = async (req: Request, res: Response) => {
     });
   }
 };
+
+exports.getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await PurchaseModel.find();
+    res.status(200).json({ status: 200, msg: "Ordenes realizadas", orders });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        status: 500,
+        msg: "Ocurrio un error trayendo las ordenes",
+        orders: [],
+      });
+  }
+};

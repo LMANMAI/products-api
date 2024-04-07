@@ -4,6 +4,11 @@ const CheckOutController = require("../controllers/checkoutController");
 const router = express.Router();
 
 router.get("/:userId", apiKeyVerification, CheckOutController.getUserOrders);
+router.get(
+  "/dashboard/getAllOrders",
+  apiKeyVerification,
+  CheckOutController.getAllOrders
+);
 router.post(
   "/create_preference",
   apiKeyVerification,
