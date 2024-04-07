@@ -1,6 +1,7 @@
 import Product from "../models";
+import PurchaseModel from "../models/purchaseItemModel";
 import { Request, Response } from "express";
-import { MercadoPagoConfig, Preference } from "mercadopago";
+import mercadopago, { MercadoPagoConfig, Preference } from "mercadopago";
 require("dotenv").config();
 
 const client = new MercadoPagoConfig({
@@ -16,9 +17,11 @@ exports.createPreference = async (req: Request, res: Response) => {
         quantity: Number(item.quantity),
         unit_price: Number(item.price),
         currency_id: "ARS",
+        description: item.userID,
+        picture_url: item.productItemPosterPath,
       };
     });
-
+    console.log(productsData);
     const body = {
       items: productsData,
       back_urls: {
@@ -46,6 +49,40 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
   try {
     const notificationData = req.body;
     console.log(notificationData);
+    if (notificationData.topic === "payment") {
+      const paymentId = notificationData.data.id;
+      const paymentAction = notificationData.action;
+
+      console.log(paymentAction, "paymentAction");
+      console.log(paymentId, "paymentId");
+    } else if (notificationData.topic === "merchant_order") {
+      const response = await fetch(notificationData.resource);
+      const { status, id, items, order_status } = await response.json();
+
+      if (status === "closed" && order_status === "paid") {
+        const newPurchaseOrder = new PurchaseModel({
+          userId: items[0].description,
+          items: items,
+          orderId: id,
+        });
+        const basketItems = items;
+        for (const item of basketItems) {
+          const product = await Product.findById(item.id);
+
+          if (product) {
+            product.sizes.forEach((size: any) => {
+              if (size.size === item.size) {
+                size.qty -= item.quantity;
+              }
+            });
+
+            await product.save();
+          }
+        }
+        await newPurchaseOrder.save();
+      }
+    }
+
     res.sendStatus(200);
   } catch (error) {
     console.error("Error al procesar la notificación de Mercado Pago:", error);
@@ -53,28 +90,20 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
   }
 };
 
-exports.completeOrder = async (req: Request, res: Response) => {
+exports.getUserOrders = async (req: Request, res: Response) => {
   try {
-    const basketItems = req.body.basket;
-    for (const item of basketItems) {
-      const product = await Product.findById(item._id);
+    const { userId } = req.params;
+    const orders = await Product.find({ userId: userId });
 
-      if (product) {
-        product.sizes.forEach((size: any) => {
-          if (size.size === item.size) {
-            size.qty -= item.quantity;
-          }
-        });
-
-        await product.save();
-      }
-    }
-
-    res.json({ msg: "Productos descontados exitosamente", status: 200 });
+    res.json({
+      msg: `Ordenes realizadas por el usuario ${userId}`,
+      status: 200,
+      orders,
+    });
   } catch (error: any) {
     console.log(error);
-    res
-      .status(500)
-      .json({ msg: `Error al completar la compra: (${error.message})` });
+    res.status(500).json({
+      msg: `Error al traer las ordenes del usurio: (${error.message})`,
+    });
   }
 };

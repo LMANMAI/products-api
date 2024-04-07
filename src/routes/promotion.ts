@@ -7,7 +7,6 @@ router.get("/getPromotions", PromotionController.getPromotions);
 router.post("/createPromotion", PromotionController.createPromotion);
 router.delete(
   "/deletePromotion/:promotionId",
-
   PromotionController.deletePromotion
 );
 export default router;
