@@ -59,15 +59,15 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
       });
       console.log(response, "response");
       if (response.ok) {
-        const { status, id, items, order_status } = await response.json();
+        const res = await response.json();
 
-        if (status === "closed" && order_status === "paid") {
+        if (res.status === "closed" && res.order_status === "paid") {
           const newPurchaseOrder = new PurchaseModel({
-            userId: items[0].description,
-            items: items,
-            orderId: id,
+            userId: res.items[0].description,
+            items: res.items,
+            orderId: res.id,
           });
-          const basketItems = items;
+          const basketItems = res.items;
           for (const item of basketItems) {
             const product = await Product.findById(item.id);
 
