@@ -1,6 +1,7 @@
 import Product from "../models";
 import { Request, Response } from "express";
 import { MercadoPagoConfig, Preference } from "mercadopago";
+require("dotenv").config();
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.ACCESS_TOKEN_MP as string,
@@ -21,15 +22,12 @@ exports.createPreference = async (req: Request, res: Response) => {
     const body = {
       items: productsData,
       back_urls: {
-        success: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
-        failure: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
-        pending: "https://sneaker-hub-commerce.vercel.app/postcheckout/-",
+        success: `${process.env.BACK_URL}postcheckout/-`,
+        failure: `${process.env.BACK_URL}checkout`,
+        pending: `${process.env.BACK_URL}checkout`,
       },
       auto_return: "approved",
-      shipments: {
-        cost: 1,
-        mode: "not_specified",
-      },
+      notification_url: `${process.env.NOTIFICACION_URL}getpayment_info`,
     };
     const preference = new Preference(client);
     const result = await preference.create({ body });
@@ -46,20 +44,12 @@ exports.createPreference = async (req: Request, res: Response) => {
 
 exports.getPaymentInfo = async (req: Request, res: Response) => {
   try {
-    const paymentId =
-      req.query.payment && typeof req.query.payment === "string"
-        ? req.query.payment
-        : null;
-    res.json({
-      Payment: paymentId,
-      Status: req.query.status,
-      MerchantOrder: req.query.merchant_order_id,
-    });
-  } catch (error: any) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ msg: `Error al traer la información: (${error.message})` });
+    const notificationData = req.body;
+    console.log(notificationData);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error al procesar la notificación de Mercado Pago:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
