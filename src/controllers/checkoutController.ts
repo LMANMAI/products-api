@@ -93,7 +93,7 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
 exports.getUserOrders = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const orders = await Product.find({ userId: userId });
+    const orders = await PurchaseModel.find({ userId: userId });
 
     res.json({
       msg: `Ordenes realizadas por el usuario ${userId}`,
