@@ -67,14 +67,10 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
           const basketItems = res.items;
           for (const item of basketItems) {
             const product = await Product.findById(item.id);
-
             if (product) {
               product.sizes.forEach((size: any) => {
-                if (size.size === item.size) {
-                  size.qty -= item.quantity;
-                }
+                size.qty -= item.quantity;
               });
-
               await product.save();
             }
           }
