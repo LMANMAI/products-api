@@ -47,18 +47,16 @@ exports.createPreference = async (req: Request, res: Response) => {
 exports.getPaymentInfo = async (req: Request, res: Response) => {
   try {
     const notificationData = req.body;
-    console.log(notificationData);
     if (notificationData.topic === "merchant_order") {
-      console.log(notificationData.resource, "notificationData");
+      const response = await fetch(notificationData.resource, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
+        },
+      });
 
-      // const response = await fetch(`https://api.mercadopago.com/v1/payments/${}`, {
-      //   method: "GET",
-      //   headers: {
-      //     Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
-      //   },
-      // });
-
-      // console.log(response, "response");
+      console.log(response, "response");
+      console.log(response.json(), "response JSON");
       // if (response.ok) {
       //   const res = await response.json();
 
