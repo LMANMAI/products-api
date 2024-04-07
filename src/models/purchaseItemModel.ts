@@ -19,7 +19,7 @@ interface Purchase extends Document {
 
 const itemSchema = new Schema<Item>({
   id: { type: String, required: true },
-  category_id: { type: String, required: true },
+  category_id: { type: String },
   currency_id: { type: String, required: true },
   description: { type: String, required: true },
   picture_url: { type: String, default: null },
