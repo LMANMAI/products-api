@@ -55,34 +55,32 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
         },
       });
 
-      console.log(response, "response");
-      console.log(response.json(), "response JSON");
-      // if (response.ok) {
-      //   const res = await response.json();
+      if (response.ok) {
+        const res = await response.json();
+        console.log(res, "respuesta JSONN");
+        // if (res.status === "closed" && res.order_status === "paid") {
+        //   const newPurchaseOrder = new PurchaseModel({
+        //     userId: res.items[0].description,
+        //     items: res.items,
+        //     orderId: res.id,
+        //   });
+        //   const basketItems = res.items;
+        //   for (const item of basketItems) {
+        //     const product = await Product.findById(item.id);
 
-      // if (res.status === "closed" && res.order_status === "paid") {
-      //   const newPurchaseOrder = new PurchaseModel({
-      //     userId: res.items[0].description,
-      //     items: res.items,
-      //     orderId: res.id,
-      //   });
-      //   const basketItems = res.items;
-      //   for (const item of basketItems) {
-      //     const product = await Product.findById(item.id);
+        //     if (product) {
+        //       product.sizes.forEach((size: any) => {
+        //         if (size.size === item.size) {
+        //           size.qty -= item.quantity;
+        //         }
+        //       });
 
-      //     if (product) {
-      //       product.sizes.forEach((size: any) => {
-      //         if (size.size === item.size) {
-      //           size.qty -= item.quantity;
-      //         }
-      //       });
-
-      //       await product.save();
-      //     }
-      //   }
-      //   await newPurchaseOrder.save();
-      // }
-      // }
+        //       await product.save();
+        //     }
+        //   }
+        //   await newPurchaseOrder.save();
+        // }
+      }
     }
 
     res.sendStatus(200);
