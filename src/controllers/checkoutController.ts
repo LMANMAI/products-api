@@ -49,41 +49,42 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
     const notificationData = req.body;
     console.log(notificationData);
     if (notificationData.topic === "merchant_order") {
-      console.log(notificationData, "notificationData");
+      console.log(notificationData.resource, "notificationData");
 
-      const response = await fetch(notificationData.resource, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
-        },
-      });
-      console.log(response, "response");
-      if (response.ok) {
-        const res = await response.json();
+      // const response = await fetch(`https://api.mercadopago.com/v1/payments/${}`, {
+      //   method: "GET",
+      //   headers: {
+      //     Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
+      //   },
+      // });
 
-        if (res.status === "closed" && res.order_status === "paid") {
-          const newPurchaseOrder = new PurchaseModel({
-            userId: res.items[0].description,
-            items: res.items,
-            orderId: res.id,
-          });
-          const basketItems = res.items;
-          for (const item of basketItems) {
-            const product = await Product.findById(item.id);
+      // console.log(response, "response");
+      // if (response.ok) {
+      //   const res = await response.json();
 
-            if (product) {
-              product.sizes.forEach((size: any) => {
-                if (size.size === item.size) {
-                  size.qty -= item.quantity;
-                }
-              });
+      // if (res.status === "closed" && res.order_status === "paid") {
+      //   const newPurchaseOrder = new PurchaseModel({
+      //     userId: res.items[0].description,
+      //     items: res.items,
+      //     orderId: res.id,
+      //   });
+      //   const basketItems = res.items;
+      //   for (const item of basketItems) {
+      //     const product = await Product.findById(item.id);
 
-              await product.save();
-            }
-          }
-          await newPurchaseOrder.save();
-        }
-      }
+      //     if (product) {
+      //       product.sizes.forEach((size: any) => {
+      //         if (size.size === item.size) {
+      //           size.qty -= item.quantity;
+      //         }
+      //       });
+
+      //       await product.save();
+      //     }
+      //   }
+      //   await newPurchaseOrder.save();
+      // }
+      // }
     }
 
     res.sendStatus(200);
