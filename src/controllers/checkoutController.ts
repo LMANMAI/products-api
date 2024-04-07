@@ -56,7 +56,12 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
       console.log(paymentAction, "paymentAction");
       console.log(paymentId, "paymentId");
     } else if (notificationData.topic === "merchant_order") {
-      const response = await fetch(notificationData.resource);
+      const response = await fetch(notificationData.resource, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
+        },
+      });
       const { status, id, items, order_status } = await response.json();
 
       if (status === "closed" && order_status === "paid") {
