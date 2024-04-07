@@ -21,7 +21,6 @@ exports.createPreference = async (req: Request, res: Response) => {
         picture_url: item.productItemPosterPath,
       };
     });
-    console.log(productsData);
     const body = {
       items: productsData,
       back_urls: {
@@ -49,42 +48,41 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
   try {
     const notificationData = req.body;
     console.log(notificationData);
-    if (notificationData.topic === "payment") {
-      const paymentId = notificationData.data.id;
-      const paymentAction = notificationData.action;
+    if (notificationData.topic === "merchant_order") {
+      console.log(notificationData, "notificationData");
 
-      console.log(paymentAction, "paymentAction");
-      console.log(paymentId, "paymentId");
-    } else if (notificationData.topic === "merchant_order") {
       const response = await fetch(notificationData.resource, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`,
         },
       });
-      const { status, id, items, order_status } = await response.json();
+      console.log(response, "response");
+      if (response.ok) {
+        const { status, id, items, order_status } = await response.json();
 
-      if (status === "closed" && order_status === "paid") {
-        const newPurchaseOrder = new PurchaseModel({
-          userId: items[0].description,
-          items: items,
-          orderId: id,
-        });
-        const basketItems = items;
-        for (const item of basketItems) {
-          const product = await Product.findById(item.id);
+        if (status === "closed" && order_status === "paid") {
+          const newPurchaseOrder = new PurchaseModel({
+            userId: items[0].description,
+            items: items,
+            orderId: id,
+          });
+          const basketItems = items;
+          for (const item of basketItems) {
+            const product = await Product.findById(item.id);
 
-          if (product) {
-            product.sizes.forEach((size: any) => {
-              if (size.size === item.size) {
-                size.qty -= item.quantity;
-              }
-            });
+            if (product) {
+              product.sizes.forEach((size: any) => {
+                if (size.size === item.size) {
+                  size.qty -= item.quantity;
+                }
+              });
 
-            await product.save();
+              await product.save();
+            }
           }
+          await newPurchaseOrder.save();
         }
-        await newPurchaseOrder.save();
       }
     }
 
