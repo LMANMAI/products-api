@@ -1,7 +1,7 @@
 import Product from "../models";
 import PurchaseModel from "../models/purchaseItemModel";
 import { Request, Response } from "express";
-import mercadopago, { MercadoPagoConfig, Preference } from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 require("dotenv").config();
 
 const client = new MercadoPagoConfig({
@@ -58,28 +58,28 @@ exports.getPaymentInfo = async (req: Request, res: Response) => {
       if (response.ok) {
         const res = await response.json();
         console.log(res, "respuesta JSONN");
-        // if (res.status === "closed" && res.order_status === "paid") {
-        //   const newPurchaseOrder = new PurchaseModel({
-        //     userId: res.items[0].description,
-        //     items: res.items,
-        //     orderId: res.id,
-        //   });
-        //   const basketItems = res.items;
-        //   for (const item of basketItems) {
-        //     const product = await Product.findById(item.id);
+        if (res.status === "closed" && res.order_status === "paid") {
+          const newPurchaseOrder = new PurchaseModel({
+            userId: res.items[0].description,
+            items: res.items,
+            orderId: res.id,
+          });
+          const basketItems = res.items;
+          for (const item of basketItems) {
+            const product = await Product.findById(item.id);
 
-        //     if (product) {
-        //       product.sizes.forEach((size: any) => {
-        //         if (size.size === item.size) {
-        //           size.qty -= item.quantity;
-        //         }
-        //       });
+            if (product) {
+              product.sizes.forEach((size: any) => {
+                if (size.size === item.size) {
+                  size.qty -= item.quantity;
+                }
+              });
 
-        //       await product.save();
-        //     }
-        //   }
-        //   await newPurchaseOrder.save();
-        // }
+              await product.save();
+            }
+          }
+          await newPurchaseOrder.save();
+        }
       }
     }
 
